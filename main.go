@@ -1,38 +1,20 @@
 package main
 
 import (
-	"net/http"
-	"strings"
+	"fmt"
 
+	"github.com/czjge/gohub/bootstrap"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
-	r := gin.New()
+	router := gin.New()
 
-	r.Use(gin.Logger(), gin.Recovery())
+	bootstrap.SetupRoute(router)
 
-	r.GET("/", func(ctx *gin.Context) {
-
-		ctx.JSON(http.StatusOK, gin.H{
-			"Hello": "World!",
-		})
-	})
-
-	r.NoRoute(func(ctx *gin.Context) {
-
-		acceptString := ctx.GetHeader("Accept")
-		if strings.Contains(acceptString, "text/html") {
-			ctx.String(http.StatusNotFound, "404 Not Found")
-		} else {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"error_code":    404,
-				"error_message": "Route not found",
-			})
-		}
-
-	})
-
-	r.Run(":8001")
+	err := router.Run(":3000")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
