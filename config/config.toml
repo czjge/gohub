@@ -1,0 +1,5 @@
+[app]
+env = "local"
+debug = true
+url = "http://localhost:3000"
+port = "2000"
