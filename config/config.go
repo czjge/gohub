@@ -18,6 +18,10 @@ type AppConfig struct {
 }
 
 type DBConfig struct {
+	DSN             string `toml:"dsn"`
+	MaxOpenConns    int    `toml:"max_open_conns"`
+	MaxIdleConns    int    `toml:"max_idle_conns"`
+	ConnMaxLifetime int    `toml:"conn_max_lifetime"`
 }
 
 type LogConfig struct {
