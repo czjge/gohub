@@ -5,9 +5,9 @@ import "github.com/BurntSushi/toml"
 var cfg Configuration
 
 type Configuration struct {
-	App   AppConfig `toml:"app"`
-	Mysql DBConfig  `toml:"mysql"`
-	Log   LogConfig `toml:"log"`
+	App   AppConfig           `toml:"app"`
+	Mysql map[string]DBConfig `toml:"mysql"`
+	Log   LogConfig           `toml:"log"`
 }
 
 type AppConfig struct {

@@ -2,27 +2,39 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 )
 
-var DB *gorm.DB
-var SQLDB *sql.DB
+type DBInfo struct {
+	DB    *gorm.DB
+	SQLDB *sql.DB
+}
 
-func Connect(dbConfig gorm.Dialector, _logger gormlogger.Interface) {
+var DBCollections map[string]*DBInfo
 
-	var err error
-	DB, err = gorm.Open(dbConfig, &gorm.Config{
+func Connect(dbConfig gorm.Dialector, _logger gormlogger.Interface) (*gorm.DB, *sql.DB, error) {
+	DB, err := gorm.Open(dbConfig, &gorm.Config{
 		Logger: _logger,
 	})
 	if err != nil {
-		fmt.Println(err.Error())
+		return nil, nil, err
 	}
 
-	SQLDB, err = DB.DB()
+	SQLDB, err := DB.DB()
 	if err != nil {
-		fmt.Println(err.Error())
+		return nil, nil, err
 	}
+	return DB, SQLDB, nil
+}
+
+func DB(name ...string) *gorm.DB {
+	if len(name) > 0 {
+		if collect, ok := DBCollections[name[0]]; ok {
+			return collect.DB
+		}
+		return nil
+	}
+	return DBCollections["default"].DB
 }

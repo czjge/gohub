@@ -4,8 +4,15 @@ debug = true
 url = "http://localhost:3000"
 port = "2000"
 
-[mysql]
-dsn = "root:root@tcp(127.0.0.1:3306)/gohub?charset=utf8mb4&parseTime=True"
-max_open_conns = 25
-max_idle_conns = 25
-conn_max_lifetime = 300
+# 默认数据库
+[mysql.default]        
+    dsn = "root:root@tcp(127.0.0.1:3306)/gohub?charset=utf8mb4&parseTime=True"
+    max_open_conns = 25
+    max_idle_conns = 25
+    conn_max_lifetime = 300
+# 其他数据库
+[mysql.gisp]        
+    dsn = "root:root@tcp(127.0.0.1:3306)/gisp?charset=utf8mb4&parseTime=True"
+    max_open_conns = 25
+    max_idle_conns = 25
+    conn_max_lifetime = 300

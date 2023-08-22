@@ -12,18 +12,36 @@ import (
 
 func SetupDB() {
 
-	// var dbConfig gorm.Dialector
+	var dbConfigs map[string]gorm.Dialector
 
-	// prepare dialector
-	var dbConfig gorm.Dialector = mysql.New(mysql.Config{
-		DSN: config.GetConfig().Mysql.DSN,
-	})
+	// prepare dialectors
+	connectInfo := config.GetConfig().Mysql
+	for name, config := range connectInfo {
+		if dbConfigs == nil {
+			dbConfigs = make(map[string]gorm.Dialector, len(connectInfo))
+		}
+		dbConfigs[name] = mysql.New(mysql.Config{
+			DSN: config.DSN,
+		})
+	}
 
 	// connect DB
-	database.Connect(dbConfig, logger.Default.LogMode(logger.Info))
-
-	// set DB parameters
-	database.SQLDB.SetMaxOpenConns(config.GetConfig().Mysql.MaxOpenConns)
-	database.SQLDB.SetMaxIdleConns(config.GetConfig().Mysql.MaxIdleConns)
-	database.SQLDB.SetConnMaxLifetime(time.Duration(config.GetConfig().Mysql.ConnMaxLifetime))
+	for k, v := range dbConfigs {
+		if database.DBCollections == nil {
+			database.DBCollections = make(map[string]*database.DBInfo, len(dbConfigs))
+		}
+		DB, SQLDB, err := database.Connect(v, logger.Default.LogMode(logger.Info))
+		if err != nil {
+			panic(err)
+		}
+		dbStruct := &database.DBInfo{
+			DB:    DB,
+			SQLDB: SQLDB,
+		}
+		database.DBCollections[k] = dbStruct
+		// set DB parameters
+		database.DBCollections[k].SQLDB.SetMaxOpenConns(config.GetConfig().Mysql[k].MaxIdleConns)
+		database.DBCollections[k].SQLDB.SetMaxIdleConns(config.GetConfig().Mysql[k].MaxIdleConns)
+		database.DBCollections[k].SQLDB.SetConnMaxLifetime(time.Duration(config.GetConfig().Mysql[k].ConnMaxLifetime))
+	}
 }
