@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"time"
 
+	"github.com/czjge/gohub/app/models/user"
 	"github.com/czjge/gohub/config"
 	"github.com/czjge/gohub/pkg/database"
 	"gorm.io/driver/mysql"
@@ -44,4 +45,7 @@ func SetupDB() {
 		database.DBCollections[k].SQLDB.SetMaxIdleConns(config.GetConfig().Mysql[k].MaxIdleConns)
 		database.DBCollections[k].SQLDB.SetConnMaxLifetime(time.Duration(config.GetConfig().Mysql[k].ConnMaxLifetime))
 	}
+
+	// 数据库迁移
+	database.DB().Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&user.User{})
 }
