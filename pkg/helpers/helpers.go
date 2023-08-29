@@ -1,6 +1,10 @@
 package helpers
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"time"
+)
 
 func Empty(val any) bool {
 	if val == nil {
@@ -24,4 +28,8 @@ func Empty(val any) bool {
 		return v.IsNil()
 	}
 	return reflect.DeepEqual(val, reflect.Zero(v.Type()).Interface())
+}
+
+func MicrosecondsStr(elapsed time.Duration) string {
+	return fmt.Sprintf("%.3fms", float64(elapsed.Nanoseconds())/1e6)
 }
