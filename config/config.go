@@ -25,6 +25,13 @@ type DBConfig struct {
 }
 
 type LogConfig struct {
+	Level     string `toml:"level"`
+	Type      string `toml:"type"`
+	Filename  string `toml:"filename"`
+	MaxSize   int    `toml:"max_size"`
+	MaxBackup int    `toml:"max_backup"`
+	MaxAge    int    `toml:"max_age"`
+	Compress  bool   `toml:"compress"`
 }
 
 func InitConfig(path string) error {

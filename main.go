@@ -13,6 +13,7 @@ func main() {
 	router := gin.New()
 
 	bootstrap.SetupConfig()
+	bootstrap.SetupLogger()
 	bootstrap.SetupDB()
 	bootstrap.SetupRoute(router)
 
