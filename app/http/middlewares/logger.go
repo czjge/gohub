@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/czjge/gohub/pkg/helpers"
+	"github.com/czjge/gohub/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 	"go.uber.org/zap"
 )
 
@@ -53,6 +55,21 @@ func Logger() gin.HandlerFunc {
 			zap.String("user-agent", c.Request.UserAgent()),
 			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
 			zap.String("time", helpers.MicrosecondsStr(cost)),
+		}
+
+		if c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE" {
+			// 请求的内容
+			logFields = append(logFields, zap.String("Request Body", string(requestBody)))
+			// 响应的内容
+			logFields = append(logFields, zap.String("Response BOdy", w.body.String()))
+		}
+
+		if responseStatus > 400 && responseStatus <= 499 {
+			logger.Warn("HTTP Warning "+cast.ToString(responseStatus), logFields...)
+		} else if responseStatus >= 500 && responseStatus <= 599 {
+			logger.Error("HTTP Error "+cast.ToString(responseStatus), logFields...)
+		} else {
+			logger.Debug("HTTP Access Log", logFields...)
 		}
 	}
 }
