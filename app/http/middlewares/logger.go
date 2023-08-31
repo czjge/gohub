@@ -5,7 +5,6 @@ import (
 	"io"
 	"time"
 
-	"github.com/czjge/gohub/pkg/helpers"
 	"github.com/czjge/gohub/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
@@ -13,10 +12,13 @@ import (
 )
 
 type responseBodyWriter struct {
+	// as long as it's initialized with a value implementing the interface
 	gin.ResponseWriter
+	// 保存响应结果
 	body *bytes.Buffer
 }
 
+// 重写 ResponseWriter.Write 方法
 func (r responseBodyWriter) Write(b []byte) (int, error) {
 	r.body.Write(b)
 	return r.ResponseWriter.Write(b)
@@ -34,7 +36,7 @@ func Logger() gin.HandlerFunc {
 		var requestBody []byte
 		if c.Request.Body != nil {
 			// c.Request.Body 是一个 buffer 对象，只能读取一次
-			requestBody, _ := io.ReadAll(c.Request.Body)
+			requestBody, _ := c.GetRawData()
 			// 读取后，重新赋值 c.Request.Body ，以供后续的其他操作
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(requestBody))
 		}
@@ -54,14 +56,15 @@ func Logger() gin.HandlerFunc {
 			zap.String("ip", c.ClientIP()),
 			zap.String("user-agent", c.Request.UserAgent()),
 			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
-			zap.String("time", helpers.MicrosecondsStr(cost)),
+			// zap.String("time", helpers.MicrosecondsStr(cost)),
+			zap.String("time", cost.String()),
 		}
 
 		if c.Request.Method == "POST" || c.Request.Method == "PUT" || c.Request.Method == "DELETE" {
 			// 请求的内容
 			logFields = append(logFields, zap.String("Request Body", string(requestBody)))
 			// 响应的内容
-			logFields = append(logFields, zap.String("Response BOdy", w.body.String()))
+			logFields = append(logFields, zap.String("Response Body", w.body.String()))
 		}
 
 		if responseStatus > 400 && responseStatus <= 499 {
