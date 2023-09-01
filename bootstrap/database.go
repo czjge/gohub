@@ -6,9 +6,9 @@ import (
 	"github.com/czjge/gohub/app/models/user"
 	"github.com/czjge/gohub/config"
 	"github.com/czjge/gohub/pkg/database"
+	"github.com/czjge/gohub/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 func SetupDB() {
@@ -31,7 +31,7 @@ func SetupDB() {
 		if database.DBCollections == nil {
 			database.DBCollections = make(map[string]*database.DBInfo, len(dbConfigs))
 		}
-		DB, SQLDB, err := database.Connect(v, logger.Default.LogMode(logger.Info))
+		DB, SQLDB, err := database.Connect(v, logger.NewGormLogger())
 		if err != nil {
 			panic(err)
 		}
