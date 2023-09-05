@@ -15,17 +15,21 @@ type RedisClient struct {
 	Context context.Context
 }
 
-// Redis 全局对象
-var Redis *RedisClient
+// Redis 对象集合
+var RedisConllections map[string]*RedisClient
 
 // 单例模式
-var once sync.Once
+var Once sync.Once
 
-// 连接 redis 服务
-func ConnectRedis(address string, username string, password string, db int) {
-	once.Do(func() {
-		Redis = NewClient(address, username, password, db)
-	})
+// 获取一个 redis 连接
+func Redis(name ...string) *RedisClient {
+	if len(name) > 0 {
+		if rds, ok := RedisConllections[name[0]]; ok {
+			return rds
+		}
+		return nil
+	}
+	return RedisConllections["default"]
 }
 
 // 创建 redis 连接

@@ -5,10 +5,10 @@ import "github.com/BurntSushi/toml"
 var cfg Configuration
 
 type Configuration struct {
-	App   AppConfig           `toml:"app"`
-	Mysql map[string]DBConfig `toml:"mysql"`
-	Log   LogConfig           `toml:"log"`
-	Redis RedisConfig         `toml:"redis"`
+	App   AppConfig              `toml:"app"`
+	Mysql map[string]DBConfig    `toml:"mysql"`
+	Log   LogConfig              `toml:"log"`
+	Redis map[string]RedisConfig `toml:"redis"`
 }
 
 type AppConfig struct {

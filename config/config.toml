@@ -41,7 +41,14 @@ max_age = 30
 # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
 compress = false
 
-[redis]
+# 默认 redis
+[redis.default]
 host = "127.0.0.1"
 port = 6379
 db = 1
+
+# 其他 redis
+[redis.gisp]
+host = "127.0.0.1"
+port = 6379
+db = 2

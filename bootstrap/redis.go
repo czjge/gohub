@@ -9,10 +9,18 @@ import (
 
 func SetupRedis() {
 
-	redis.ConnectRedis(
-		fmt.Sprintf("%v:%v", config.GetConfig().Redis.Host, config.GetConfig().Redis.Port),
-		config.GetConfig().Redis.Username,
-		config.GetConfig().Redis.Password,
-		config.GetConfig().Redis.DB,
-	)
+	configs := config.GetConfig().Redis
+	redis.Once.Do(func() {
+		if redis.RedisConllections == nil {
+			redis.RedisConllections = make(map[string]*redis.RedisClient, len(redis.RedisConllections))
+		}
+		for name, config := range configs {
+			redis.RedisConllections[name] = redis.NewClient(
+				fmt.Sprintf("%v:%v", config.Host, config.Port),
+				config.Username,
+				config.Password,
+				config.DB,
+			)
+		}
+	})
 }
