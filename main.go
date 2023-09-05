@@ -22,6 +22,7 @@ func main() {
 	bootstrap.SetupConfig()
 	bootstrap.SetupLogger()
 	bootstrap.SetupDB()
+	bootstrap.SetupRedis()
 	bootstrap.SetupRoute(router)
 
 	err := router.Run(":" + config.GetConfig().App.Port)

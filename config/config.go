@@ -8,6 +8,7 @@ type Configuration struct {
 	App   AppConfig           `toml:"app"`
 	Mysql map[string]DBConfig `toml:"mysql"`
 	Log   LogConfig           `toml:"log"`
+	Redis RedisConfig         `toml:"redis"`
 }
 
 type AppConfig struct {
@@ -32,6 +33,14 @@ type LogConfig struct {
 	MaxBackup int    `toml:"max_backup"`
 	MaxAge    int    `toml:"max_age"`
 	Compress  bool   `toml:"compress"`
+}
+
+type RedisConfig struct {
+	Host     string `toml:"host"`
+	Port     int    `toml:"port"`
+	Username string `toml:"username"`
+	Password string `toml:"password"`
+	DB       int    `toml:"db"`
 }
 
 func InitConfig(path string) error {
