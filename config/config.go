@@ -5,10 +5,11 @@ import "github.com/BurntSushi/toml"
 var cfg Configuration
 
 type Configuration struct {
-	App   AppConfig              `toml:"app"`
-	Mysql map[string]DBConfig    `toml:"mysql"`
-	Log   LogConfig              `toml:"log"`
-	Redis map[string]RedisConfig `toml:"redis"`
+	App     AppConfig              `toml:"app"`
+	Mysql   map[string]DBConfig    `toml:"mysql"`
+	Log     LogConfig              `toml:"log"`
+	Redis   map[string]RedisConfig `toml:"redis"`
+	Captcha CaptchaConfig          `toml:"captcha"`
 }
 
 type AppConfig struct {
@@ -41,6 +42,17 @@ type RedisConfig struct {
 	Username string `toml:"username"`
 	Password string `toml:"password"`
 	DB       int    `toml:"db"`
+}
+
+type CaptchaConfig struct {
+	Height          int     `toml:"height"`
+	Width           int     `toml:"width"`
+	Length          int     `toml:"width"`
+	Maxskew         float32 `toml:"maxskew"`
+	Dotcount        int     `toml:"dotcount"`
+	ExpireTime      int     `toml:"expire_time"`
+	DebugExpireTime int     `toml:"debug_expire_time"`
+	TestingKey      string  `toml:"testing_key"`
 }
 
 func InitConfig(path string) error {
