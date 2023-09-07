@@ -13,6 +13,7 @@ type Configuration struct {
 }
 
 type AppConfig struct {
+	Name  string `toml:"name"`
 	Env   string `toml:"env"`
 	Debug bool   `toml:"debug"`
 	Url   string `toml:"url"`
@@ -48,7 +49,7 @@ type CaptchaConfig struct {
 	Height          int     `toml:"height"`
 	Width           int     `toml:"width"`
 	Length          int     `toml:"width"`
-	Maxskew         float32 `toml:"maxskew"`
+	Maxskew         float64 `toml:"maxskew"`
 	Dotcount        int     `toml:"dotcount"`
 	ExpireTime      int     `toml:"expire_time"`
 	DebugExpireTime int     `toml:"debug_expire_time"`
