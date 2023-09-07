@@ -48,7 +48,7 @@ type RedisConfig struct {
 type CaptchaConfig struct {
 	Height          int     `toml:"height"`
 	Width           int     `toml:"width"`
-	Length          int     `toml:"width"`
+	Length          int     `toml:"length"`
 	Maxskew         float64 `toml:"maxskew"`
 	Dotcount        int     `toml:"dotcount"`
 	ExpireTime      int     `toml:"expire_time"`
