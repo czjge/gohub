@@ -71,3 +71,7 @@ expire_time = 15
 debug_expire_time = 10080
 # 非 production 环境，使用此 key 可跳过验证
 testing_key = "captcha_skip_test"
+
+[sms]
+access_key_id = "LTAI4G8fApPTigCQSGq5yf1y"
+access_key_secret = "uOJJTvNiJUVnHbTHZ5En817ae49DWJ"

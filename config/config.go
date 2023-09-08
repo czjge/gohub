@@ -56,6 +56,11 @@ type CaptchaConfig struct {
 	TestingKey      string  `toml:"testing_key"`
 }
 
+type SmsConfig struct {
+	AccessKeyId     string `toml:"access_key_id"`
+	AccessKeySecret string `toml:"access_key_secret"`
+}
+
 func InitConfig(path string) error {
 	_, err := toml.DecodeFile(path, &cfg)
 	return err
