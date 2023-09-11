@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"time"
@@ -32,4 +33,11 @@ func Empty(val any) bool {
 
 func MicrosecondsStr(elapsed time.Duration) string {
 	return fmt.Sprintf("%.3fms", float64(elapsed.Nanoseconds())/1e6)
+}
+
+func Struct2Map(s any) map[string]string {
+	data, _ := json.Marshal(&s)
+	m := make(map[string]string)
+	json.Unmarshal(data, &m)
+	return m
 }

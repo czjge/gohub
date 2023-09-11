@@ -10,6 +10,7 @@ type Configuration struct {
 	Log     LogConfig              `toml:"log"`
 	Redis   map[string]RedisConfig `toml:"redis"`
 	Captcha CaptchaConfig          `toml:"captcha"`
+	Sms     SmsConfig              `toml:"sms"`
 }
 
 type AppConfig struct {
@@ -59,6 +60,8 @@ type CaptchaConfig struct {
 type SmsConfig struct {
 	AccessKeyId     string `toml:"access_key_id"`
 	AccessKeySecret string `toml:"access_key_secret"`
+	SignName        string `toml:"sign_name"`
+	TemplateCode    string `toml:"template_code"`
 }
 
 func InitConfig(path string) error {

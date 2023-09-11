@@ -75,3 +75,5 @@ testing_key = "captcha_skip_test"
 [sms]
 access_key_id = "LTAI4G8fApPTigCQSGq5yf1y"
 access_key_secret = "uOJJTvNiJUVnHbTHZ5En817ae49DWJ"
+sign_name = "数字出版"
+template_code = "SMS_211800215"
