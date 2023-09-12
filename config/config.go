@@ -12,6 +12,7 @@ type Configuration struct {
 	Captcha    CaptchaConfig          `toml:"captcha"`
 	Sms        SmsConfig              `toml:"sms"`
 	Verifycode VerifycodeConfig       `toml:"verifycode"`
+	Email      EmailConfig            `toml:"email"`
 }
 
 type AppConfig struct {
@@ -72,6 +73,23 @@ type VerifycodeConfig struct {
 	DebugCode        string `toml:"debug_code"`
 	DebugPhonePrefix string `toml:"debug_phone_prefix"`
 	DebugEmailSuffix string `toml:"debug_email_suffix"`
+}
+
+type EmailConfig struct {
+	Smtp SmtpConfig        `toml:"smtp"`
+	From EmailSenderConfig `toml:"from"`
+}
+
+type SmtpConfig struct {
+	Host     string `toml:"host"`
+	Port     int    `toml:"port"`
+	Username string `toml:"username"`
+	Password string `toml:"password"`
+}
+
+type EmailSenderConfig struct {
+	Address string `toml:"address"`
+	Name    string `toml:"name"`
 }
 
 func InitConfig(path string) error {

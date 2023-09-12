@@ -85,3 +85,12 @@ debug_expire_time = 10080
 debug_code = "123456"
 debug_phone_prefix = "000"
 debug_email_suffix = "@testing.com"
+
+[email.smtp]
+host = "localhost"
+port = 1025
+username = ""
+password = ""
+[email.from]
+address = "gohub@example.com"
+name = "Gohub"
