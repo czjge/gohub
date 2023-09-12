@@ -82,7 +82,7 @@ type EmailConfig struct {
 
 type SmtpConfig struct {
 	Host     string `toml:"host"`
-	Port     int    `toml:"port"`
+	Port     string `toml:"port"`
 	Username string `toml:"username"`
 	Password string `toml:"password"`
 }

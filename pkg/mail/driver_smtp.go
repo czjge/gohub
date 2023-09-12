@@ -25,6 +25,9 @@ func (s *SMTP) Send(email Email, config map[string]string) bool {
 
 	logger.DebugJSON("发送邮件", "发送详情", e)
 
+	logger.DebugJSON("发送邮件", "参数", config)
+
+	// SendWithTLS
 	err := e.Send(
 		fmt.Sprintf("%v:%v", config["Host"], config["Port"]),
 		smtp.PlainAuth(

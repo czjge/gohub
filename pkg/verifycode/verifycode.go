@@ -1,6 +1,7 @@
 package verifycode
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/czjge/gohub/pkg/app"
 	"github.com/czjge/gohub/pkg/helpers"
 	"github.com/czjge/gohub/pkg/logger"
+	"github.com/czjge/gohub/pkg/mail"
 	"github.com/czjge/gohub/pkg/redis"
 	"github.com/czjge/gohub/pkg/sms"
 )
@@ -50,6 +52,31 @@ func (vc *VerifyCode) SendSMS(phone string) bool {
 		Template: config.Sms.TemplateCode,
 		Data:     map[string]string{"code": code},
 	})
+}
+
+func (vc *VerifyCode) SendEmail(email string) error {
+
+	code := vc.generateVerifyCode(email)
+
+	config := config.GetConfig()
+
+	if !app.IsProduction() && strings.HasSuffix(email, config.Verifycode.DebugEmailSuffix) {
+		return nil
+	}
+
+	content := fmt.Sprintf("<h1>您的 Email 验证码是 %v</h1>", code)
+
+	mail.NewMailer().Send(mail.Email{
+		From: mail.From{
+			Address: config.Email.From.Address,
+			Name:    config.Email.From.Name,
+		},
+		To:      []string{email},
+		Subject: "Email 验证码",
+		HTML:    []byte(content),
+	})
+
+	return nil
 }
 
 func (vc *VerifyCode) CheckAnswer(key string, answer string) bool {
