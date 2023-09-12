@@ -77,3 +77,11 @@ access_key_id = "LTAI4G8fApPTigCQSGq5yf1y"
 access_key_secret = "uOJJTvNiJUVnHbTHZ5En817ae49DWJ"
 sign_name = "数字出版"
 template_code = "SMS_211800215"
+
+[verifycode]
+code_length = 6
+expire_time = 15
+debug_expire_time = 10080
+debug_code = "123456"
+debug_phone_prefix = "000"
+debug_email_suffix = "@testing.com"

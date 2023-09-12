@@ -5,12 +5,13 @@ import "github.com/BurntSushi/toml"
 var cfg Configuration
 
 type Configuration struct {
-	App     AppConfig              `toml:"app"`
-	Mysql   map[string]DBConfig    `toml:"mysql"`
-	Log     LogConfig              `toml:"log"`
-	Redis   map[string]RedisConfig `toml:"redis"`
-	Captcha CaptchaConfig          `toml:"captcha"`
-	Sms     SmsConfig              `toml:"sms"`
+	App        AppConfig              `toml:"app"`
+	Mysql      map[string]DBConfig    `toml:"mysql"`
+	Log        LogConfig              `toml:"log"`
+	Redis      map[string]RedisConfig `toml:"redis"`
+	Captcha    CaptchaConfig          `toml:"captcha"`
+	Sms        SmsConfig              `toml:"sms"`
+	Verifycode VerifycodeConfig       `toml:"verifycode"`
 }
 
 type AppConfig struct {
@@ -62,6 +63,15 @@ type SmsConfig struct {
 	AccessKeySecret string `toml:"access_key_secret"`
 	SignName        string `toml:"sign_name"`
 	TemplateCode    string `toml:"template_code"`
+}
+
+type VerifycodeConfig struct {
+	CodeLength       int    `toml:"code_length"`
+	ExpireTime       int    `toml:"expire_time"`
+	DebugExpireTime  int    `toml:"debug_expire_time"`
+	DebugCode        string `toml:"debug_code"`
+	DebugPhonePrefix string `toml:"debug_phone_prefix"`
+	DebugEmailSuffix string `toml:"debug_email_suffix"`
 }
 
 func InitConfig(path string) error {
