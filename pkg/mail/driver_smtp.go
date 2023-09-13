@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/smtp"
 
@@ -28,7 +29,8 @@ func (s *SMTP) Send(email Email, config map[string]string) bool {
 	logger.DebugJSON("发送邮件", "参数", config)
 
 	// SendWithTLS
-	err := e.Send(
+	// Send
+	err := e.SendWithTLS(
 		fmt.Sprintf("%v:%v", config["Host"], config["Port"]),
 		smtp.PlainAuth(
 			"",
@@ -36,6 +38,9 @@ func (s *SMTP) Send(email Email, config map[string]string) bool {
 			config["Password"],
 			config["Host"],
 		),
+		&tls.Config{
+			ServerName: config["Host"],
+		},
 	)
 	if err != nil {
 		logger.ErrorString("发送邮件", "发件出错", err.Error())

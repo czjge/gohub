@@ -87,10 +87,10 @@ debug_phone_prefix = "000"
 debug_email_suffix = "@testing.com"
 
 [email.smtp]
-host = "localhost"
-port = "1025"
-username = ""
-password = ""
+host = "smtp.163.com"
+port = "465"
+username = "a18200122199@163.com"
+password = "CWJEGFVQOKBTVXRS"
 [email.from]
-address = "gohub@example.com"
-name = "Gohub"
+address = "a18200122199@163.com"
+name = "czjge"
