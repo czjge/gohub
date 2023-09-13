@@ -16,6 +16,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			suc := new(auth.SignupController) // 分配内存，返回指向该类型的零值的指针
 			authGroup.POST("/signup/phone/exist", suc.IsPhoneExist)
 			authGroup.POST("/signup/email/exist", suc.IsEmailExist)
+			authGroup.POST("/signup/using-phone", suc.SignupUsingPhone)
 
 			vcc := new(auth.VerifyCodeController)
 			authGroup.POST("/verify-codes/captcha", vcc.ShowCaptcha)
