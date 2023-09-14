@@ -13,14 +13,16 @@ type Configuration struct {
 	Sms        SmsConfig              `toml:"sms"`
 	Verifycode VerifycodeConfig       `toml:"verifycode"`
 	Email      EmailConfig            `toml:"email"`
+	Jwt        JWTConfig              `toml:"jwt"`
 }
 
 type AppConfig struct {
-	Name  string `toml:"name"`
-	Env   string `toml:"env"`
-	Debug bool   `toml:"debug"`
-	Url   string `toml:"url"`
-	Port  string `toml:"port"`
+	Name     string `toml:"name"`
+	Env      string `toml:"env"`
+	Debug    bool   `toml:"debug"`
+	Url      string `toml:"url"`
+	Port     string `toml:"port"`
+	Timezone string `toml:"timezone"`
 }
 
 type DBConfig struct {
@@ -90,6 +92,13 @@ type SmtpConfig struct {
 type EmailSenderConfig struct {
 	Address string `toml:"address"`
 	Name    string `toml:"name"`
+}
+
+type JWTConfig struct {
+	SignKey         string `toml:"sign_key"`
+	ExpireTime      int    `toml:"expire_time"`
+	MaxRefreshTime  int    `toml:"max_refresh_time"`
+	DebugExpireTime int    `toml:"debug_expire_time"`
 }
 
 func InitConfig(path string) error {

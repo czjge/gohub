@@ -1,6 +1,10 @@
 package app
 
-import "github.com/czjge/gohub/config"
+import (
+	"time"
+
+	"github.com/czjge/gohub/config"
+)
 
 func IsLocal() bool {
 	return config.GetConfig().App.Env == "local"
@@ -12,4 +16,9 @@ func IsProduction() bool {
 
 func IsTesting() bool {
 	return config.GetConfig().App.Env == "testing"
+}
+
+func TimenowInTimezone() time.Time {
+	chinaTimezone, _ := time.LoadLocation(config.GetConfig().App.Timezone)
+	return time.Now().In(chinaTimezone)
 }
