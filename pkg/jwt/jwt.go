@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -13,12 +14,8 @@ import (
 )
 
 var (
-	ErrTokenExpired           error = errors.New("令牌已过期")
-	ErrTokenExpiredMaxRefresh error = errors.New("令牌已过最大刷新时间")
-	ErrTokenMalFormed         error = errors.New("请求令牌格式有误")
-	ErrTokenInvalid           error = errors.New("请求令牌无效")
-	ErrHeaderEmpty            error = errors.New("需要认证才能访问")
-	ErrHeaderMalFormed        error = errors.New("请求头中 Authorization 格式有误")
+	ErrHeaderEmpty            error = errors.New("token is required")
+	ErrTokenExpiredMaxRefresh error = errors.New("token has expired max refresh time")
 )
 
 // jwt 对象
@@ -82,10 +79,38 @@ func (jwt *JWT) ParseToken(c *gin.Context) (*JWTCustomClaims, error) {
 
 	token, err := jwt.parseTokenString(tokenString)
 
-	if err != nil {
-
-		// validationErr, ok := err.(jwtpkg.)
+	if claims, ok := token.Claims.(*JWTCustomClaims); ok && token.Valid {
+		return claims, nil
 	}
+
+	return nil, err
+}
+
+// 刷新 token
+func (jwt *JWT) RefreshToken(c *gin.Context) (string, error) {
+
+	tokenString, parseErr := jwt.getTokenFromHeader(c)
+	if parseErr != nil {
+		return "", parseErr
+	}
+
+	token, err := jwt.parseTokenString(tokenString)
+
+	// 如果 error 是 jwtpkg.ErrTokenExpired，则可以刷新 token
+	if err != nil && err != fmt.Errorf("%w: %w", jwtpkg.ErrTokenInvalidClaims, jwtpkg.ErrTokenExpired) {
+		return "", err
+	}
+
+	claims := token.Claims.(*JWTCustomClaims)
+
+	// 检查是否超过最大可刷新时间
+	x := app.TimenowInTimezone().Add(-jwt.MaxRefresh).Unix()
+	if claims.IssuedAt.Time.Unix() > x {
+		claims.RegisteredClaims.ExpiresAt = jwtpkg.NewNumericDate(jwt.expireAtTime())
+		return jwt.createToken(*claims)
+	}
+
+	return "", ErrTokenExpiredMaxRefresh
 }
 
 // 创建 token（内部调用）
@@ -121,7 +146,7 @@ func (jwt *JWT) getTokenFromHeader(c *gin.Context) (string, error) {
 
 	parts := strings.SplitN(authHeader, " ", 2)
 	if !(len(parts) == 2 && parts[0] == "Bearer") {
-		return "", ErrHeaderMalFormed
+		return "", jwtpkg.ErrTokenMalformed
 	}
 
 	return parts[1], nil

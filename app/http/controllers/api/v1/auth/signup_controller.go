@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/czjge/gohub/app/models/user"
 	"github.com/czjge/gohub/app/requests"
+	"github.com/czjge/gohub/pkg/jwt"
 	"github.com/czjge/gohub/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -48,8 +49,10 @@ func (sc *SignupController) SignupUsingPhone(c *gin.Context) {
 	_user.Create()
 
 	if _user.ID > 0 {
+		token := jwt.NewJWT().IssueToken(_user.GetStringID(), _user.Name)
 		response.CreatedJSON(c, gin.H{
-			"data": _user,
+			"data":  _user,
+			"token": token,
 		})
 	} else {
 		response.Abort500(c, "创建用户失败")
@@ -72,8 +75,10 @@ func (sc *SignupController) SignupUsingEmail(c *gin.Context) {
 	_user.Create()
 
 	if _user.ID > 0 {
+		token := jwt.NewJWT().IssueToken(_user.GetStringID(), _user.Name)
 		response.CreatedJSON(c, gin.H{
-			"data": _user,
+			"data":  _user,
+			"token": token,
 		})
 	} else {
 		response.Abort500(c, "创建用户失败")
