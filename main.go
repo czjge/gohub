@@ -2,31 +2,42 @@ package main
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/czjge/gohub/app/cmd"
 	"github.com/czjge/gohub/bootstrap"
-	"github.com/czjge/gohub/config"
-
-	"github.com/gin-gonic/gin"
+	"github.com/czjge/gohub/pkg/console"
+	"github.com/spf13/cobra"
 )
 
 func main() {
 
-	// 设置 gin 的运行模式，支持 debug, release, test
-	// release 会屏蔽调试信息，官方建议生产环境中使用
-	// 非 release 模式 gin 终端打印太多信息，干扰到我们程序中的 Log
-	// 故此设置为 release，有特殊情况手动改为 debug 即可
-	gin.SetMode(gin.ReleaseMode)
+	var rootCmd = &cobra.Command{
+		Use:   "Gohub",
+		Short: "A simple forum project",
+		Long:  `Default will run "serve" command, you can use "-h" flag to see all subcommands`,
+		// 所有子命令都会执行以下代码
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			bootstrap.SetupConfig()
+			bootstrap.SetupLogger()
+			bootstrap.SetupDB()
+			bootstrap.SetupRedis()
+		},
+	}
 
-	router := gin.New()
+	// 注册子命令
+	rootCmd.AddCommand(
+		cmd.CmdServe,
+	)
 
-	bootstrap.SetupConfig()
-	bootstrap.SetupLogger()
-	bootstrap.SetupDB()
-	bootstrap.SetupRedis()
-	bootstrap.SetupRoute(router)
+	// 配置默认运行 Web 服务
+	cmd.RegisterDefaultCmd(rootCmd, cmd.CmdServe)
 
-	err := router.Run(":" + config.GetConfig().App.Port)
-	if err != nil {
-		fmt.Println(err.Error())
+	// 注册全局参数，--env
+	cmd.RegisterGlobalFlags(rootCmd)
+
+	// 执行主命令
+	if err := rootCmd.Execute(); err != nil {
+		console.Exit(fmt.Sprintf("Failed to run app with %v: %s", os.Args, err.Error()))
 	}
 }
