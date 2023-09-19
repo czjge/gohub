@@ -29,13 +29,14 @@ func main() {
 	rootCmd.AddCommand(
 		cmd.CmdServe,
 		cmd.CmdKey,
+		cmd.CmdPlay,
 	)
 
 	// 配置默认运行 Web 服务
 	cmd.RegisterDefaultCmd(rootCmd, cmd.CmdServe)
 
 	// 注册全局参数，--env
-	cmd.RegisterGlobalFlags(rootCmd)
+	// cmd.RegisterGlobalFlags(rootCmd)
 
 	// 执行主命令
 	if err := rootCmd.Execute(); err != nil {
