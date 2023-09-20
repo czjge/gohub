@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/czjge/gohub/pkg/console"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,10 @@ func runMakeModel(cmd *cobra.Command, args []string) {
 	model := makeModelFromString(args[0])
 
 	dir := fmt.Sprintf("app/models/%s/", model.PackageName)
-	os.MkdirAll(dir, os.ModePerm)
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		console.Exit(err.Error())
+	}
 
 	createFileFromStub(dir+model.PackageName+"_model.go", "model/model", model)
 	createFileFromStub(dir+model.PackageName+"_util.go", "model/model_util", model)
