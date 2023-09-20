@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/czjge/gohub/app/cmd"
+	_make "github.com/czjge/gohub/app/cmd/make"
 	"github.com/czjge/gohub/bootstrap"
 	"github.com/czjge/gohub/pkg/console"
 	"github.com/spf13/cobra"
@@ -30,6 +31,7 @@ func main() {
 		cmd.CmdServe,
 		cmd.CmdKey,
 		cmd.CmdPlay,
+		_make.CmdMake,
 	)
 
 	// 配置默认运行 Web 服务
