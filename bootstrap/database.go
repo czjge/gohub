@@ -3,8 +3,6 @@ package bootstrap
 import (
 	"time"
 
-	"github.com/czjge/gohub/app/models/sms"
-	"github.com/czjge/gohub/app/models/user"
 	"github.com/czjge/gohub/config"
 	"github.com/czjge/gohub/pkg/database"
 	"github.com/czjge/gohub/pkg/logger"
@@ -48,5 +46,5 @@ func SetupDB() {
 	}
 
 	// 数据库迁移
-	database.DB().Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&user.User{}, &sms.Sms{})
+	// database.DB().Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&user.User{}, &sms.Sms{})
 }

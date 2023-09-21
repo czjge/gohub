@@ -38,3 +38,13 @@ func DB(name ...string) *gorm.DB {
 	}
 	return DBCollections["default"].DB
 }
+
+func SQLDB(name ...string) *sql.DB {
+	if len(name) > 0 {
+		if collect, ok := DBCollections[name[0]]; ok {
+			return collect.SQLDB
+		}
+		return nil
+	}
+	return DBCollections["default"].SQLDB
+}
