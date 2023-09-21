@@ -4,6 +4,8 @@ import (
 	"github.com/czjge/gohub/app/http/controllers/api/v1/auth"
 	"github.com/czjge/gohub/app/http/middlewares"
 	"github.com/gin-gonic/gin"
+
+	controllers "github.com/czjge/gohub/app/http/controllers/api/v1"
 )
 
 // Register API routes.
@@ -14,8 +16,11 @@ func RegisterAPIRoutes(r *gin.Engine) {
 
 	v1.Use(middlewares.LimitIP("200-H"))
 	{
-		authGroup := v1.Group("/auth")
+		// 用户
+		uc := new(controllers.UsersController)
+		v1.GET("/user", middlewares.AuthJWT(), uc.CurrentUser)
 
+		authGroup := v1.Group("/auth")
 		authGroup.Use(middlewares.LimitIP("1000-H"))
 		{
 			// 登录
