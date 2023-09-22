@@ -14,6 +14,7 @@ type Configuration struct {
 	Verifycode VerifycodeConfig       `toml:"verifycode"`
 	Email      EmailConfig            `toml:"email"`
 	Jwt        JWTConfig              `toml:"jwt"`
+	Paging     PagingConfig           `toml:"paging"`
 }
 
 type AppConfig struct {
@@ -99,6 +100,14 @@ type JWTConfig struct {
 	ExpireTime      int    `toml:"expire_time"`
 	MaxRefreshTime  int    `toml:"max_refresh_time"`
 	DebugExpireTime int    `toml:"debug_expire_time"`
+}
+
+type PagingConfig struct {
+	Perpage         int    `toml:"perpage"`
+	UrlQueryPage    string `toml:"url_query_page"`
+	UrlQuerySort    string `toml:"url_query_sort"`
+	UrlQueryOrder   string `toml:"url_query_order"`
+	UrlQueryPerPage string `toml:"url_query_per_page"`
 }
 
 func InitConfig(path string) error {

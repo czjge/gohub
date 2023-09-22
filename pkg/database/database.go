@@ -87,3 +87,9 @@ func DeleteAllTables(name ...string) error {
 	DB(name...).Exec("SET foreign_key_checks = 1;")
 	return nil
 }
+
+func TableName(obj any, name ...string) string {
+	stmt := &gorm.Statement{DB: DB(name...)}
+	stmt.Parse(obj)
+	return stmt.Schema.Table
+}

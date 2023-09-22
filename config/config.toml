@@ -104,3 +104,10 @@ expire_time = 120
 max_refresh_time = 86400
 # 单位：分钟
 debug_expire_time = 86400
+
+[paging]
+perpage = 10
+url_query_page = "page"
+url_query_sort = "sort"
+url_query_order = "order"
+url_query_per_page = "per_page"
