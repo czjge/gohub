@@ -58,6 +58,30 @@ func init() {
 		return nil
 	})
 
+	// 自定义规则 exists，确保数据库存在某条数据
+	// 一个使用场景是创建话题时需要附带 category_id 分类 ID 为参数，此时需要保证
+	// category_id 的值在数据库中存在，即可使用：
+	// exists:categories,id
+	govalidator.AddCustomRule("exists", func(field, rule, message string, value any) error {
+
+		rng := strings.Split(strings.TrimPrefix(rule, "exists:"), ",")
+
+		tableName := rng[0]
+		dbFiled := rng[1]
+
+		requestValue := value.(string)
+
+		var count int64
+		database.DB().Table(tableName).Where(dbFiled+" = ?", requestValue).Count(&count)
+		if count == 0 {
+			if message != "" {
+				return errors.New(message)
+			}
+			return fmt.Errorf("%v 不存在", requestValue)
+		}
+		return nil
+	})
+
 	// max_cn:8 中文长度设定不超过 8
 	govalidator.AddCustomRule("max_cn", func(field, rule, message string, value any) error {
 
