@@ -24,6 +24,16 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			usersGroup.GET("", uc.Index)
 		}
 
+		// 分类
+		cgc := new(controllers.CategoriesController)
+		cgcGroup := v1.Group("/categories")
+		{
+			cgcGroup.GET("", cgc.Index)
+			cgcGroup.POST("", middlewares.AuthJWT(), cgc.Store)
+			cgcGroup.PUT("/:id", middlewares.AuthJWT(), cgc.Update)
+			cgcGroup.DELETE("/:id", middlewares.AuthJWT(), cgc.Delete)
+		}
+
 		authGroup := v1.Group("/auth")
 		authGroup.Use(middlewares.LimitIP("1000-H"))
 		{
