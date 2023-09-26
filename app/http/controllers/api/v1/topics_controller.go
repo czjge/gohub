@@ -27,8 +27,10 @@ func (ctrl *TopicsController) Store(c *gin.Context) {
 		UserID:     auth.CurrentUID(c),
 	}
 	topicModel.Create()
+
 	if topicModel.ID > 0 {
-		response.Created(c, topicModel)
+		_topic := topic.GetByIDWithAssociation(topicModel.ID)
+		response.Created(c, _topic)
 	} else {
 		response.Abort500(c, "创建失败，请稍后尝试~")
 	}
