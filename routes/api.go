@@ -45,6 +45,13 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			tpcGroup.GET("/:id", tpc.Show)
 		}
 
+		// 友情链接
+		lsc := new(controllers.LinksController)
+		linksGroup := v1.Group("/links")
+		{
+			linksGroup.GET("", lsc.Index)
+		}
+
 		authGroup := v1.Group("/auth")
 		authGroup.Use(middlewares.LimitIP("1000-H"))
 		{
