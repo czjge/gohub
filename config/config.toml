@@ -50,7 +50,7 @@ port = 6379
 db = 1
 
 # 其他 redis
-[redis.gisp]
+[redis.cache]
 host = "127.0.0.1"
 port = 6379
 db = 2

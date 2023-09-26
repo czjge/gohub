@@ -13,9 +13,17 @@ type JSONTime struct {
 }
 
 // MarshalJSON on JSONTime format Time field with %Y-%m-%d %H:%M:%S
+//
+//	c.JSON 时调用
 func (t JSONTime) MarshalJSON() ([]byte, error) {
 	formatted := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
 	return []byte(formatted), nil
+}
+
+// 在 c.ShouldBindJSON 时，会调用 field.UnmarshalJSON 方法
+func (t JSONTime) UnmarshalJSON(data []byte) (err error) {
+	_, err = time.Parse("2006-01-02 15:04:05", string(data))
+	return err
 }
 
 // Value insert timestamp into mysql need this function.
