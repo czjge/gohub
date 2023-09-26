@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/czjge/gohub/app/models/topic"
+	"github.com/czjge/gohub/app/policies"
 	"github.com/czjge/gohub/app/requests"
 	"github.com/czjge/gohub/pkg/auth"
 	"github.com/czjge/gohub/pkg/response"
@@ -41,6 +42,11 @@ func (ctrl *TopicsController) Update(c *gin.Context) {
 	topicModel := topic.Get(c.Param("id"))
 	if topicModel.ID == 0 {
 		response.Abort404(c)
+		return
+	}
+
+	if ok := policies.CanModifyTopic(c, topicModel); !ok {
+		response.Abort403(c)
 		return
 	}
 
