@@ -4,48 +4,30 @@ package models
 import (
 	"database/sql/driver"
 	"fmt"
+	"strings"
 	"time"
 )
 
-// JSONTime format json time field by myself
-type JSONTime struct {
-	time.Time
+type LocalTime time.Time
+
+func (t LocalTime) MarshalJSON() ([]byte, error) {
+	tTime := time.Time(t)
+	return []byte(fmt.Sprintf("\"%v\"", tTime.Format("2006-01-02 15:04:05"))), nil
 }
 
-// MarshalJSON on JSONTime format Time field with %Y-%m-%d %H:%M:%S
-//
-//	c.JSON 时调用
-func (t JSONTime) MarshalJSON() ([]byte, error) {
-	formatted := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
-	return []byte(formatted), nil
+func (t LocalTime) Value() (driver.Value, error) {
+	tTime := time.Time(t)
+	return tTime.Format("2006-01-02 15:04:05"), nil
 }
 
-// 在 c.ShouldBindJSON 时，会调用 field.UnmarshalJSON 方法
-func (t JSONTime) UnmarshalJSON(data []byte) (err error) {
-	_, err = time.Parse("2006-01-02 15:04:05", string(data))
-	return err
-}
-
-// Value insert timestamp into mysql need this function.
-func (t JSONTime) Value() (driver.Value, error) {
-	var zeroTime time.Time
-	if t.Time.UnixNano() == zeroTime.UnixNano() {
-		return nil, nil
-	}
-	return t.Time, nil
-}
-
-// Scan valueof time.Time
-func (t *JSONTime) Scan(v interface{}) error {
-	value, ok := v.(time.Time)
-	if ok {
-		*t = JSONTime{Time: value}
+func (t *LocalTime) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
 		return nil
 	}
-	return fmt.Errorf("can not convert %v to timestamp", v)
-}
-
-// New on JSONTime format Time field with %Y-%m-%d %H:%M:%S
-func (t JSONTime) New() JSONTime {
-	return JSONTime{Time: time.Now()}
+	var err error
+	str := string(data)
+	timeStr := strings.Trim(str, "\"")
+	t1, err := time.Parse("2006-01-02 15:04:05", timeStr)
+	*t = LocalTime(t1)
+	return err
 }
