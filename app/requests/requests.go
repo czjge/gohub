@@ -43,3 +43,14 @@ func Validate(c *gin.Context, obj any, handler ValidatorFunc) bool {
 
 	return true
 }
+
+func ValidateFile(c *gin.Context, data any, rules govalidator.MapData, messages govalidator.MapData) map[string][]string {
+	opts := govalidator.Options{
+		Request:       c.Request,
+		Rules:         rules,
+		Messages:      messages,
+		TagIdentifier: "valid",
+	}
+
+	return govalidator.New(opts).Validate()
+}

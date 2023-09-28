@@ -19,6 +19,8 @@ func SetupRoute(router *gin.Engine) {
 
 	// register 404 route
 	setup404Handler(router)
+
+	registerStatic(router)
 }
 
 func registerGlobalMiddleware(router *gin.Engine) {
@@ -40,4 +42,8 @@ func setup404Handler(router *gin.Engine) {
 			})
 		}
 	})
+}
+
+func registerStatic(router *gin.Engine) {
+	router.StaticFS("/uploads", http.Dir("./public/uploads"))
 }

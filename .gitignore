@@ -4,6 +4,7 @@ gohub
 .DS_Store
 .history
 storage/logs
+public/uploads
 
 # Golang #
 ######################

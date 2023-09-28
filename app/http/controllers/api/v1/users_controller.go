@@ -3,7 +3,9 @@ package v1
 import (
 	"github.com/czjge/gohub/app/models/user"
 	"github.com/czjge/gohub/app/requests"
+	"github.com/czjge/gohub/config"
 	"github.com/czjge/gohub/pkg/auth"
+	"github.com/czjge/gohub/pkg/file"
 	"github.com/czjge/gohub/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -29,4 +31,98 @@ func (ctrl *UsersController) Index(c *gin.Context) {
 		"data":  data,
 		"pager": pager,
 	})
+}
+
+func (ctrl *UsersController) UpdateProfile(c *gin.Context) {
+
+	request := requests.UserUpdateProfileRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdateProfile); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	currentUser.Name = request.Name
+	currentUser.City = request.City
+	currentUser.Introduction = request.Introduction
+	rowsAffected := currentUser.Save()
+	if rowsAffected > 0 {
+		response.Data(c, currentUser)
+	} else {
+		response.Abort500(c, "更新失败")
+	}
+}
+
+func (ctrl *UsersController) UpdateEmail(c *gin.Context) {
+
+	request := requests.UserUpdateEmailRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdateEmail); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	currentUser.Email = request.Email
+	rowsAffected := currentUser.Save()
+
+	if rowsAffected > 0 {
+		response.Success(c)
+	} else {
+		response.Abort500(c, "更新失败")
+	}
+}
+
+func (ctrl *UsersController) UpdatePhone(c *gin.Context) {
+
+	request := requests.UserUpdatePhoneRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdatePhone); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	currentUser.Phone = request.Phone
+	rowsAffected := currentUser.Save()
+
+	if rowsAffected > 0 {
+		response.Success(c)
+	} else {
+		response.Abort500(c, "更新失败，请稍后尝试~")
+	}
+}
+
+func (ctrl *UsersController) UpdatePassword(c *gin.Context) {
+
+	request := requests.UserUpdatePasswordRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdatePassword); !ok {
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	_, err := auth.Attempt(currentUser.Name, request.Password)
+	if err != nil {
+		response.Unauthorized(c, "原密码错误")
+	} else {
+		currentUser.Password = request.NewPassword
+		currentUser.Save()
+
+		response.Success(c)
+	}
+}
+
+func (ctrl *UsersController) UpdateAvatar(c *gin.Context) {
+
+	request := requests.UserUpdateAvatarRequest{}
+	if ok := requests.Validate(c, &request, requests.UserUpdateAvatar); !ok {
+		return
+	}
+
+	avatar, err := file.SaveUploadAvatar(c, request.Avatar)
+	if err != nil {
+		response.Abort500(c, "上传失败")
+		return
+	}
+
+	currentUser := auth.CurrentUser(c)
+	currentUser.Avatar = config.GetConfig().App.Url + avatar
+	currentUser.Save()
+
+	response.Data(c, currentUser)
 }
