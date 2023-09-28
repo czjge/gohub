@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/czjge/gohub/app/http/controllers/api/v1/auth"
 	"github.com/czjge/gohub/app/http/middlewares"
+	"github.com/czjge/gohub/config"
 	"github.com/gin-gonic/gin"
 
 	controllers "github.com/czjge/gohub/app/http/controllers/api/v1"
@@ -11,8 +12,12 @@ import (
 // Register API routes.
 func RegisterAPIRoutes(r *gin.Engine) {
 
-	// v1 route group
-	v1 := r.Group("/v1")
+	var v1 *gin.RouterGroup
+	if len(config.GetConfig().App.APIDomain) == 0 {
+		v1 = r.Group("/api/v1")
+	} else {
+		v1 = r.Group("/v1")
+	}
 
 	v1.Use(middlewares.LimitIP("200-H"))
 	{

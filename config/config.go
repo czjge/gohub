@@ -18,12 +18,13 @@ type Configuration struct {
 }
 
 type AppConfig struct {
-	Name     string `toml:"name"`
-	Env      string `toml:"env"`
-	Debug    bool   `toml:"debug"`
-	Url      string `toml:"url"`
-	Port     string `toml:"port"`
-	Timezone string `toml:"timezone"`
+	Name      string `toml:"name"`
+	Env       string `toml:"env"`
+	Debug     bool   `toml:"debug"`
+	Url       string `toml:"url"`
+	Port      string `toml:"port"`
+	Timezone  string `toml:"timezone"`
+	APIDomain string `toml:"api_domain"`
 }
 
 type DBConfig struct {

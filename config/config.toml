@@ -5,6 +5,8 @@ debug = true
 url = "http://localhost:3000"
 port = "3000"
 timezone = "Asia/Shanghai"
+# API 域名，未设置的话所有 API URL 加 api 前缀，如 http://domain.com/api/v1/users
+api_domain = ""
 
 # 默认数据库
 [mysql.default]        
