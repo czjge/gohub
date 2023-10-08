@@ -1,0 +1,16 @@
+package tasks
+
+import "fmt"
+
+type {{StructName}}Task struct {
+}
+
+func (d *{{StructName}}Task) Rule() string {
+	return "* * * * * *"
+}
+
+func (d *{{StructName}}Task) Execute() func() {
+	return func() {
+		fmt.Println("{{PackageName}} task exec...")
+	}
+}

@@ -20,6 +20,7 @@ require (
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/redis/go-redis/v9 v9.1.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.7.0
 	github.com/thedevsaddam/govalidator v1.9.10
