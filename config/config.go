@@ -1,6 +1,13 @@
 package config
 
-import "github.com/BurntSushi/toml"
+import (
+	"fmt"
+	"log"
+	"path/filepath"
+
+	"github.com/BurntSushi/toml"
+	"github.com/fsnotify/fsnotify"
+)
 
 var cfg Configuration
 
@@ -113,9 +120,50 @@ type PagingConfig struct {
 
 func InitConfig(path string) error {
 	_, err := toml.DecodeFile(path, &cfg)
+	watchConfig(path)
 	return err
 }
 
 func GetConfig() Configuration {
 	return cfg
+}
+
+func watchConfig(path string) {
+
+	go func() {
+
+		w, err := fsnotify.NewWatcher()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer w.Close()
+
+		configPath, _ := filepath.Abs(path)
+		configDir, _ := filepath.Split(configPath)
+
+		down := make(chan bool)
+		go func() {
+			for {
+				select {
+				case event, ok := <-w.Events:
+					if !ok {
+						log.Println("error!")
+					}
+					fmt.Println(filepath.Clean(event.Name))
+					if filepath.Clean(event.Name) == configPath {
+						if event.Op == fsnotify.Write || event.Op == fsnotify.Create {
+							toml.DecodeFile(path, &cfg)
+						}
+					}
+				case err, ok := <-w.Errors:
+					if !ok {
+						log.Println("errors:", err)
+					}
+				}
+			}
+		}()
+
+		w.Add(configDir)
+		<-down
+	}()
 }

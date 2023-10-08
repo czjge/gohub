@@ -9,6 +9,7 @@ require (
 	github.com/alibabacloud-go/tea v1.1.19
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.3
 	github.com/disintegration/imaging v1.6.2
+	github.com/fsnotify/fsnotify v1.6.0
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-faker/faker/v4 v4.2.0
