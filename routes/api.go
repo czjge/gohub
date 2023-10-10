@@ -62,6 +62,13 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			linksGroup.GET("", lsc.Index)
 		}
 
+		// AMQP
+		mqc := new(controllers.AMQPController)
+		amqpGroup := v1.Group("/amqp")
+		{
+			amqpGroup.POST("/work-send", mqc.WorkSend)
+		}
+
 		authGroup := v1.Group("/auth")
 		authGroup.Use(middlewares.LimitIP("1000-H"))
 		{

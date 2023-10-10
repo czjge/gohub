@@ -24,6 +24,8 @@ func main() {
 			bootstrap.SetupDB()
 			bootstrap.SetupRedis()
 			bootstrap.SetupCache()
+
+			bootstrap.SetupWorkQueue()
 		},
 	}
 
