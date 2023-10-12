@@ -27,7 +27,8 @@ func main() {
 
 			// bootstrap.SetupWorkQueue()
 			// bootstrap.SetupPubsubQueue()
-			bootstrap.SetupRoutingQueue()
+			// bootstrap.SetupRoutingQueue()
+			bootstrap.SetupTopicQueue()
 		},
 	}
 
