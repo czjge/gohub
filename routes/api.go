@@ -70,6 +70,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			amqpGroup.POST("/pubsub-send", mqc.PubsubSend)
 			amqpGroup.POST("/routing-send", mqc.RoutingSend)
 			amqpGroup.POST("/topic-send", mqc.TopicSend)
+			amqpGroup.POST("/rpc-call", mqc.RpcCall)
 		}
 
 		authGroup := v1.Group("/auth")

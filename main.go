@@ -28,7 +28,8 @@ func main() {
 			// bootstrap.SetupWorkQueue()
 			// bootstrap.SetupPubsubQueue()
 			// bootstrap.SetupRoutingQueue()
-			bootstrap.SetupTopicQueue()
+			// bootstrap.SetupTopicQueue()
+			bootstrap.SetupRPCServer()
 		},
 	}
 

@@ -3,8 +3,10 @@ package v1
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
+	"github.com/czjge/gohub/pkg/helpers"
 	"github.com/czjge/gohub/pkg/logger"
 	"github.com/czjge/gohub/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -180,6 +182,75 @@ func (ctrl *AMQPController) TopicSend(c *gin.Context) {
 	logger.LogIf(err)
 
 	log.Printf(" [x] Sent %s", body)
+
+	response.Success(c)
+}
+
+func (ctrl *AMQPController) RpcCall(c *gin.Context) {
+
+	message := c.PostForm("message")
+	n, err := strconv.Atoi(message)
+	logger.LogIf(err)
+
+	log.Printf(" [x] Requesting fib(%d)", n)
+
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	logger.LogIf(err)
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	logger.LogIf(err)
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		"",    // name
+		false, // durable
+		false, // delete when unused
+		true,  // exclusive
+		false, // no-wait
+		nil,   // arguments
+	)
+	logger.LogIf(err)
+
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    //args
+	)
+	logger.LogIf(err)
+
+	corrId := helpers.RandomString(32)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = ch.PublishWithContext(ctx,
+		"",          // exchange
+		"rpc_queue", // routing key
+		false,       // mandatory
+		false,       // immediate
+		amqp.Publishing{
+			ContentType:   "text/plain",
+			CorrelationId: corrId,
+			ReplyTo:       q.Name,
+			Body:          []byte(strconv.Itoa(n)),
+		},
+	)
+	logger.LogIf(err)
+
+	for d := range msgs {
+		if corrId == d.CorrelationId {
+			res, err := strconv.Atoi(string(d.Body))
+			logger.LogIf(err)
+
+			log.Printf(" [.] Got %d", res)
+			break
+		}
+	}
 
 	response.Success(c)
 }
