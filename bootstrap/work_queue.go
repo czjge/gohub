@@ -10,7 +10,9 @@ import (
 )
 
 func SetupWorkQueue() {
+
 	for i := 0; i < 2; i++ {
+
 		go func(n int) {
 			conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 			logger.LogIf(err)
@@ -21,6 +23,7 @@ func SetupWorkQueue() {
 			defer ch.Close()
 
 			q, err := ch.QueueDeclare(
+				// we needed to point the workers to the same queue by name
 				"task_queue", // name
 				true,         // durable
 				false,        // delete when unused

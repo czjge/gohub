@@ -16,6 +16,7 @@ type AMQPController struct {
 }
 
 func (ctrl *AMQPController) WorkSend(c *gin.Context) {
+
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	logger.LogIf(err)
 	defer conn.Close()
@@ -38,6 +39,7 @@ func (ctrl *AMQPController) WorkSend(c *gin.Context) {
 
 	body := c.PostForm("message")
 	err = ch.PublishWithContext(ctx,
+		// Here we use the default or nameless exchange: messages are routed to the queue with the name specified by routing_key parameter, if it exists.
 		"",     // exchange
 		q.Name, // routing key
 		false,  // mandatory
@@ -48,6 +50,49 @@ func (ctrl *AMQPController) WorkSend(c *gin.Context) {
 			Body:         []byte(body),
 		})
 	logger.LogIf(err)
+	log.Printf(" [x] Sent %s\n", body)
+
+	response.Success(c)
+}
+
+func (ctrl *AMQPController) PubsubSend(c *gin.Context) {
+
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	logger.LogIf(err)
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	logger.LogIf(err)
+	defer ch.Close()
+
+	err = ch.ExchangeDeclare(
+		"logs",   // name
+		"fanout", // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wati
+		nil,      // arguments
+	)
+	logger.LogIf(err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	body := c.PostForm("message")
+	err = ch.PublishWithContext(ctx,
+		"logs", // exchange
+		// its value is ignored since the exchange type is fanout
+		"",    // routing_key
+		false, // mandatory
+		false, // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		},
+	)
+	logger.LogIf(err)
+
 	log.Printf(" [x] Sent %s\n", body)
 
 	response.Success(c)
