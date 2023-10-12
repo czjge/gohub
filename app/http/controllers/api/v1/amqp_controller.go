@@ -97,3 +97,46 @@ func (ctrl *AMQPController) PubsubSend(c *gin.Context) {
 
 	response.Success(c)
 }
+
+func (ctrl *AMQPController) RoutingSend(c *gin.Context) {
+
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	logger.LogIf(err)
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	logger.LogIf(err)
+	defer ch.Close()
+
+	err = ch.ExchangeDeclare(
+		"logs_direct", // name
+		"direct",      // type
+		true,          // durable
+		false,         // auto-deleted
+		false,         // internal
+		false,         // no-wait
+		nil,           // arguments
+	)
+	logger.LogIf(err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	body := c.PostForm("message")
+	severity := c.PostForm("severity")
+	err = ch.PublishWithContext(ctx,
+		"logs_direct", // exchange
+		severity,      // routing key
+		false,         // mandatory
+		false,         // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		},
+	)
+	logger.LogIf(err)
+
+	log.Printf(" [x] Sent %s", body)
+
+	response.Success(c)
+}

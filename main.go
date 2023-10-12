@@ -26,7 +26,8 @@ func main() {
 			bootstrap.SetupCache()
 
 			// bootstrap.SetupWorkQueue()
-			bootstrap.SetupPubsubQueue()
+			// bootstrap.SetupPubsubQueue()
+			bootstrap.SetupRoutingQueue()
 		},
 	}
 
